@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>黑白</title>
+</head>
+<style>
+    #cl {
+        border: 1px solid green;
+    }
+</style>
+<body>
+    <canvas id='cl' width='800px' height='600px' ></canvas><br />
+    <img id='img' width='1200px' height='800px' src='./timg.jpg' />
+    <script>
+        const canvas = document.getElementById('cl');
+        const img = document.getElementById('img')
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width;
+        const H = canvas.height;
+        const ImgW = img.width / 4;
+        const ImgH = img.height / 4;
+
+        const x = (W - ImgW) / 2;
+        const y = (H - ImgH) / 2;
+        window.onload = function() {
+            ctx.drawImage(img,ImgW,ImgH,x,y);
+            let ImgData = ctx.getImageData(x,y,ImgW,ImgH);
+            for(let R = 0; R < ImgW; R++) {
+                for(C = 0; C< ImgH; C++) {
+                    let index = (C * ImgW + R ) * 4;
+                    let rr = index + 0;
+                    let gg = index + 1;
+                    let bb = index + 2;
+                    let aa = index + 3;
+                    let avg = (ImgData.data[rr] + ImgData.data[gg] + ImgData.data[bb]) / 3;
+                    ImgData.data[rr] = ImgData.data[gg] = ImgData.data[bb] = avg;
+                }
+            }
+            // ctx.save();
+            ctx.rotate(Math.PI / 3)
+            ctx.putImageData(ImgData,0,0)
+        }
+
+    </script>
+</body>
+</html>

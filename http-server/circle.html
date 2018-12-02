@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>requestAnimationFrame</title>
+</head>
+<style>
+    #C1 {
+        border: 1px solid red;
+        /* background: #ccc; */
+    }
+</style>
+<body>
+    <canvas width='800px' height='600px' id='C1'></canvas>
+    <script>
+       let canvas = document.querySelector('#C1');
+       const ctx = canvas.getContext('2d');
+       const rect = { // 矩形参数
+           x:100,y:60,r:50,color:'red',
+       }
+       const W = canvas.width - rect.r; // x轴方向的运动范围
+       const H = canvas.height - rect.r; // y轴方向的运动范围
+       const speedX = 10; // x轴方向的运动速度
+       const speedY = 2; // y轴方向的运动速度
+       const lengthX = W / speedX; // x轴方向运动的时间
+       const lengthY = H / speedY; // y轴方向运动的时间
+       const num = {numX:rect.x / speedX,numY:rect.y / speedY} // 起始点
+       const status = {statusX:1,statusY:1} // 控制方向1代表正方向，2代表反方向
+       // 动画制作函数===递归
+       function loop() {
+           window.requestAnimationFrame(()=> {
+           
+            drawRect(rect)
+            // x方向
+            change(rect,'x',speedX,num,'numX',status,'statusX',lengthX)
+            // 方向
+            change(rect,'y',speedY,num,'numY',status,'statusY',lengthY)
+            
+              loop()
+           })
+       }
+       loop()
+       // 控制运动函数
+       function change(rect,key,speed,num,numKey,status,statusKey,length) {
+        if(status[statusKey] > 0) {
+                if(num[numKey] <= length) {
+                    rect[key] = num[numKey] * speed;
+                }else {
+                    status[statusKey] = -1
+                }
+                num[numKey]++
+           }else {
+               if(num[numKey] >= rect.r / speed) {
+                rect[key] = num[numKey] * speed ;
+               }else {
+                status[statusKey] = 1
+               }
+               num[numKey]--
+           }
+       }
+       // 画图函数
+       function drawRect(rect) {
+        // ctx.clearRect(0,0,canvas.width,canvas.height);
+           ctx.beginPath()
+           ctx.fillStyle= 'rgba(255,255,255,0.1)';
+           ctx.fillRect(0,0,canvas.width,canvas.height);
+           ctx.beginPath();
+           ctx.fillStyle = rect.color;
+           ctx.arc(rect.x,rect.y,rect.r,0,Math.PI * 2);
+           ctx.fill()
+       }
+       
+    </script>
+</body>
+</html>
